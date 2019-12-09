@@ -59,9 +59,9 @@
                 display: none;
             }
             section{
-                position: absolute;
+                /* position: absolute;
                 top: 50%;
-                transform: translateY(-50%);
+                transform: translateY(-50%); */
                 width: 100%;
             }
                 img{
@@ -83,6 +83,11 @@
                     font-family: Verdana;
                     color: rgba(255, 255, 255, .6);
                     font-size: 25px;
+                }
+                .glimmer {
+                    font-size: 65px;
+                    font-family: "Gilmer-Outline";
+                    color: #fff;
                 }
                 button{
                     cursor: pointer;
@@ -111,6 +116,12 @@
                     50% { transform: scale(0.65); }
                     to { transform: scale(1); }
                 }
+    #step2{
+        display: none;
+    }
+    #prize{
+        height: 200px;
+    }
     </style>
     <link rel="stylesheet" href="fireworks.css">
 </head>
@@ -121,15 +132,27 @@
     </div>
     <section class="drawing">
         <img src="logo.png" alt="DATCODE logo" />
-        <h2>AND THE WINNER IS&hellip;</h2>
-        <h1 id="name">&nbsp;</h1>
-        <button id="stop">STOP</button>
+        <h2>WE ARE PLAYING FOR</h2>
+        <div id="prize">
+            <img id="prize_img" src="/merch/energy_tee_white.png" />
+        </div>
+        <h2 class="glimmer" id="prize_name"></h2>
+        <button id="pick_prize">PICK PRIZE</button>
+        <div id="step2">
+            <h2>AND THE WINNER IS&hellip;</h2>
+            <h1 id="name">&nbsp;</h1>
+            <button id="stop">STOP</button>
+        </div>
     </section>
     <script>
         (function(){
             var name = document.getElementById('name'),
                 stop = document.getElementById('stop'),
                 pyro = document.querySelector('.pyro'),
+                pick_prize = document.getElementById('pick_prize'),
+                prize_img = document.getElementById('prize_img'),
+                prize_name = document.getElementById('prize_name'),
+                step2 = document.getElementById('step2'),
                 click_count = 0,
                 clicks_needed = 3,
                 names = ['ReneeQA', 'nobelwb', 'Treymayne Stewart',
@@ -138,6 +161,42 @@
                     'whitney', 'kevon', 'Ryan Chanel', 'Niko', 'BlackEndDev'],
                 names_length = names.length;
 
+            // item chooser
+            var merch = {
+                'DAT SOCK': 'datsock.jpg',
+                'WHITE ENERGY TEE': 'energy_tee_white.png',
+                'BLACK ENERGY TEE': 'energy_tee_black.png',
+                'BLACK SPECTRUM HOODIE': 'spectrum_hoodie_black.png',
+                'WHITE SPECTRUM HOODIE': 'spectrum_hoodie_white.png',
+                'LARGE SPECTRUM MUG': 'spectrum_mug_large.jpg',
+                'SPECTRUM MUG': 'spectrum_mug_small.jpg',
+                'BLACK SPECTRUM TEE': 'spectrum_tee_black.png',
+                'WHITE SPECTRUM TEE': 'spectrum_tee_white.png',
+            };
+            var merch_keys = Object.keys(merch),
+                merch_length = merch_keys.length;
+
+            var randomPrize = function(){
+                var name = merch_keys[Math.floor(Math.random() * merch_length)],
+                    img = merch[name];
+                console.log(name, img)
+                prize_name.innerHTML = name;
+                prize_img.src = '/merch/' + img;
+            };
+
+            var item_interval = setInterval(function(){
+                randomPrize();
+            }, 200);
+
+            pick_prize.addEventListener('click', function(e){
+                e.preventDefault();
+                pick_prize.style.display = 'none';
+                step2.style.display = 'block';
+                clearTimeout(item_interval);
+                item_interval = null;
+            });
+
+            // winner chooser
             stop.innerHTML = clicks_needed + " MORE CLICKS TO CHOOSE A WINNER";
 
             var randomName = function(){
